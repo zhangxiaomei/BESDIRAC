@@ -45,3 +45,10 @@ class TransferRequestHandler(RequestHandler):
     tmpGlobalStore[self.user]["endpoint"][name] = url
 
     return S_OK()
+
+  types_create = [ list, str, str ]
+  def export_create(self, filelist, ep_from, ep_to):
+    gLogger.info(filelist)
+    gLogger.info(ep_from)
+    gLogger.info(ep_to)
+    return S_OK()
