@@ -16,6 +16,14 @@ TransRequestEntry = namedtuple('TransRequestEntry',
                                'submit_time',
                                'status',
                                ])
+TransFileListEntry = namedtuple('TransFileListEntry',
+                                [#'id',
+                                 'LFN',
+                                 'trans_req_id',
+                                 'start_time',
+                                 'finish_time',
+                                 'status',
+                                 ])
 
 class TransferDB(DB):
   tables = dict(TransferRequest = "TransferRequest",
@@ -44,6 +52,17 @@ class TransferDB(DB):
                           )
     return res
 
+  def insert_PerTransferFile(self, entry):
+    if not isinstance(entry, TransFileListEntry):
+      raise TypeError("entry should be TransFileListEntry")
+    infoDict = entry._asdict()
+    res = self.insertFields( self.tables["TransferFileList"],
+                             inDict = infoDict)
+    if not res["OK"]:
+      return res
+    res = self._query("select last_insert_id()")
+    return res
+
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script
   Script.parseCommandLine( ignoreErrors = True )
@@ -56,6 +75,17 @@ if __name__ == "__main__":
                             dstSE = "IHEPD-USER",
                             status = "new",
                             submit_time = datetime.datetime.now())
-  print gDB.insert_TransferRequest(entry)
+  res = gDB.insert_TransferRequest(entry)
+  trans_id = 1
+  if not res["OK"]:
+    trans_id = res["Value"]
   print gDB.get_TransferRequest()
   print gDB.get_TransferRequest(condDict = {"id":1})
+
+  entry = TransFileListEntry(LFN = "/path/does/not/exist",
+                             trans_req_id = trans_id,
+                             start_time = None,
+                             finish_time = None,
+                             status = "new",
+                             )
+  gDB.insert_PerTransferFile(entry)

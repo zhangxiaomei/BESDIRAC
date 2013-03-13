@@ -28,8 +28,8 @@ create table TransferFileList (
   id int not null auto_increment primary key,
   LFN varchar(255) not null,
   trans_req_id int not null,
-  start_time datetime not null,
-  finish_time datetime not null,
+  start_time datetime,
+  finish_time datetime,
   status enum('new', 'transfer', 'finish') not null,
   index(status),
   foreign key (trans_req_id) references TransferRequest (id)
