@@ -24,6 +24,8 @@ TransFileListEntry = namedtuple('TransFileListEntry',
                                  'finish_time',
                                  'status',
                                  ])
+TransFileListEntryWithID = namedtuple('TransFileListEntryWithID',
+                                      ('id',) + TransFileListEntry._fields)
 
 class TransferDB(DB):
   tables = dict(TransferRequest = "TransferRequest",
@@ -77,6 +79,13 @@ class TransferDB(DB):
                                  )
       self.insert_PerTransferFile(entry)
 
+  def get_TransferFileList(self, condDict = None):
+    res = self.getFields( self.tables["TransferFileList"], 
+                           outFields = TransFileListEntryWithID._fields,
+                           condDict = condDict,
+                           )
+    return res
+
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script
   Script.parseCommandLine( ignoreErrors = True )
@@ -107,3 +116,8 @@ if __name__ == "__main__":
 
   filelist = map(str, range(10))
   gDB.insert_TransferFileList(trans_id, filelist)
+
+  condDict = {'trans_req_id': trans_id}
+  print gDB.get_TransferFileList(condDict)
+  condDict = {'status': 'new'}
+  print gDB.get_TransferFileList(condDict)
