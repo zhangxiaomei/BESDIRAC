@@ -34,3 +34,23 @@ create table TransferFileList (
   index(status),
   foreign key (trans_req_id) references TransferRequest (id)
 ) ENGINE=InnoDB;
+
+-- 2013.03.13
+-- we need give user the ability to create their own dataset.
+-- the file list may be from DFC. we don't care.
+drop table if exists FilesInDataSet;
+drop table if exists Dataset;
+
+create table Dataset (
+  id int not null auto_increment primary key,
+  name varchar(255) not null,
+  username varchar(255) not null,
+  index(username)
+);
+
+create table FilesInDataSet (
+  id int not null auto_increment primary key,
+  LFN varchar(255) not null,
+  dataset_id int not null,
+  foreign key (dataset_id) references Dataset (id)
+);
