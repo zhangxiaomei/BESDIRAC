@@ -61,8 +61,10 @@ class TransferRequestHandler(RequestHandler):
   types_create = [ str, str, str ]
   def export_create(self, dataset, ep_from, ep_to):
     entry = TransRequestEntry(username = self.user, 
+                              dataset = dataset,
                               srcSE = ep_from,
                               dstSE = ep_to,
+                              status = "new",
                               submit_time = datetime.datetime.now())
     gLogger.info("create an Entry:", entry)
     res = gTransferDB.insert_TransferRequest(entry)
