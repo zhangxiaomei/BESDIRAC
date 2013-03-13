@@ -10,6 +10,8 @@ import datetime
 TransRequestEntry = namedtuple('TransRequestEntry',
                               [#'id',
                                'username',
+                               'srcSE',
+                               'dstSE',
                                'submit_time',
                                ])
 
@@ -36,6 +38,8 @@ if __name__ == "__main__":
 
   gDB = TransferDB()
 
-  entry = TransRequestEntry(username="lintao", 
+  entry = TransRequestEntry(username = "lintao", 
+                            srcSE = "IHEP-USER",
+                            dstSE = "IHEPD-USER",
                             submit_time = datetime.datetime.now())
   gDB.insert_TransferRequest(entry)
