@@ -6,6 +6,8 @@
 
 ALTER DATABASE CHARACTER SET "utf8";
 
+-- for foreign key
+drop table if exists TransferFileList;
 drop table if exists TransferRequest;
 
 create table TransferRequest (
@@ -15,8 +17,20 @@ create table TransferRequest (
   dataset varchar(255) not null,
   srcSE varchar(255) not null,
   dstSE varchar(255) not null,
-  submit_time datetime,
-  status enum('new', 'transfer', 'finish'),
+  submit_time datetime not null,
+  status enum('new', 'transfer', 'finish') not null,
   index(status)
-);
+) ENGINE=InnoDB;
 
+drop table if exists TransferFileList;
+
+create table TransferFileList (
+  id int not null auto_increment primary key,
+  LFN varchar(255) not null,
+  trans_req_id int not null,
+  start_time datetime not null,
+  finish_time datetime not null,
+  status enum('new', 'transfer', 'finish') not null,
+  index(status),
+  foreign key (trans_req_id) references TransferRequest (id)
+) ENGINE=InnoDB;
