@@ -32,6 +32,9 @@ class TransferDB(DB):
     infoDict = entry._asdict()
     res = self.insertFields( self.tables["TransferRequest"],
                              inDict = infoDict)
+    if not res["OK"]:
+      return res
+    res = self._query("select last_insert_id()")
     return res
 
   def get_TransferRequest(self, condDict = None):
@@ -53,6 +56,6 @@ if __name__ == "__main__":
                             dstSE = "IHEPD-USER",
                             status = "new",
                             submit_time = datetime.datetime.now())
-  gDB.insert_TransferRequest(entry)
+  print gDB.insert_TransferRequest(entry)
   print gDB.get_TransferRequest()
   print gDB.get_TransferRequest(condDict = {"id":1})
