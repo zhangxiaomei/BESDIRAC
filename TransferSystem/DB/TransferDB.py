@@ -115,7 +115,10 @@ class TransferDB(DB):
     for perfile in filelist:
       entry = FilesInDatasetEntry( dataset_id = dataset_id,
                                    LFN = perfile)
-      self.helper_insert_FilesInDataset_table(entry)
+      res = self.helper_insert_FilesInDataset_table(entry)
+      if not res["OK"]:
+        return res
+    return S_OK()
 
   def helper_insert_Dataset_table(self, entry):
     if not isinstance(entry, DatasetEntry):
