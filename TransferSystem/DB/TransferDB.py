@@ -10,9 +10,11 @@ import datetime
 TransRequestEntry = namedtuple('TransRequestEntry',
                               [#'id',
                                'username',
+                               'dataset',
                                'srcSE',
                                'dstSE',
                                'submit_time',
+                               'status',
                                ])
 
 class TransferDB(DB):
@@ -39,7 +41,9 @@ if __name__ == "__main__":
   gDB = TransferDB()
 
   entry = TransRequestEntry(username = "lintao", 
+                            dataset = "my-dataset",
                             srcSE = "IHEP-USER",
                             dstSE = "IHEPD-USER",
+                            status = "new",
                             submit_time = datetime.datetime.now())
   gDB.insert_TransferRequest(entry)
