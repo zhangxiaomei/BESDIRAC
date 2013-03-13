@@ -34,6 +34,16 @@ class TransferDB(DB):
                              inDict = infoDict)
     return res
 
+  def get_TransferRequest(self, condDict = None):
+    res = self.getFields( self.tables["TransferRequest"],
+                          outFields = TransRequestEntry._fields,
+                          condDict = condDict,
+                          )
+    if res["OK"]:
+      values = map(TransRequestEntry._make, res["Value"])
+      return S_OK(values)
+    return res
+
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script
   Script.parseCommandLine( ignoreErrors = True )
@@ -47,3 +57,5 @@ if __name__ == "__main__":
                             status = "new",
                             submit_time = datetime.datetime.now())
   gDB.insert_TransferRequest(entry)
+  print gDB.get_TransferRequest()
+  print gDB.get_TransferRequest(condDict = {"id":1})
