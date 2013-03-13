@@ -27,9 +27,23 @@ TransFileListEntry = namedtuple('TransFileListEntry',
 TransFileListEntryWithID = namedtuple('TransFileListEntryWithID',
                                       ('id',) + TransFileListEntry._fields)
 
+DatasetEntry = namedtuple('DatasetEntry',
+                          [#'id',
+                            'name',
+                            'username',
+                            ])
+FilesInDatasetEntry = namedtuple('FilesInDatasetEntry',
+                                [#'id',
+                                  'LFN',
+                                  'dataset_id',
+                                  ])
+
+
 class TransferDB(DB):
   tables = dict(TransferRequest = "TransferRequest",
-                TransferFileList = "TransferFileList")
+                TransferFileList = "TransferFileList",
+                Dataset = "Dataset",
+                FilesInDataSet = "FilesInDataSet")
 
   def __init__(self, dbname="TransferDB", 
                      fullname="Transfer/TransferDB",
@@ -86,6 +100,47 @@ class TransferDB(DB):
                            )
     return res
 
+  def insert_Dataset(self, dataset, user, filelist):
+    # two step:
+    # insert into Dataset table.
+    # insert into Files in Dataset table.
+    entry = DatasetEntry( name = dataset,
+                          username = user,
+                          )
+    res = self.helper_insert_Dataset_table(entry)
+    if not res["OK"]:
+      return res
+    dataset_id = res["Value"]
+
+    for perfile in filelist:
+      entry = FilesInDatasetEntry( dataset_id = dataset_id,
+                                   LFN = perfile)
+      self.helper_insert_FilesInDataset_table(entry)
+
+  def helper_insert_Dataset_table(self, entry):
+    if not isinstance(entry, DatasetEntry):
+      raise TypeError("entry should be DatasetEntry")
+    infoDict = entry._asdict()
+    res = self.insertFields( self.tables["Dataset"],
+                             inDict=infoDict,
+                             )
+    if not res["OK"]:
+      return res
+    res = self._query("select last_insert_id()")
+    if not res["OK"]:
+      return res
+    id = res['Value'][0][0]
+    return S_OK(id)
+
+  def helper_insert_FilesInDataset_table(self, entry):
+    if not isinstance(entry, FilesInDatasetEntry):
+      raise TypeError("entry should be FilesInDatasetEntry")
+    infoDict = entry._asdict()
+    res = self.insertFields( self.tables["FilesInDataSet"],
+                             inDict=infoDict,
+                             )
+    return res
+
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script
   Script.parseCommandLine( ignoreErrors = True )
@@ -121,3 +176,5 @@ if __name__ == "__main__":
   print gDB.get_TransferFileList(condDict)
   condDict = {'status': 'new'}
   print gDB.get_TransferFileList(condDict)
+
+  gDB.insert_Dataset( "my-dataset", "lintao", filelist)
