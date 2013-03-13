@@ -71,3 +71,8 @@ class TransferRequestHandler(RequestHandler):
     if not res["OK"]:
       return res
     return S_OK()
+
+  types_status = [ dict ]
+  def export_status(self, condDict=None):
+    res = gTransferDB.get_TransferRequest(condDict)
+    return res

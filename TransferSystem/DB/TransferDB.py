@@ -39,9 +39,6 @@ class TransferDB(DB):
                           outFields = TransRequestEntry._fields,
                           condDict = condDict,
                           )
-    if res["OK"]:
-      values = map(TransRequestEntry._make, res["Value"])
-      return S_OK(values)
     return res
 
 if __name__ == "__main__":
