@@ -43,7 +43,7 @@ drop table if exists Dataset;
 
 create table Dataset (
   id int not null auto_increment primary key,
-  name varchar(255) not null,
+  name varchar(255) not null unique,
   username varchar(255) not null,
   index(username)
 );
