@@ -58,15 +58,14 @@ class TransferRequestHandler(RequestHandler):
 
     return S_OK()
 
-  types_create = [ list, str, str ]
-  def export_create(self, filelist, ep_from, ep_to):
+  types_create = [ str, str, str ]
+  def export_create(self, dataset, ep_from, ep_to):
     entry = TransRequestEntry(username = self.user, 
+                              srcSE = ep_from,
+                              dstSE = ep_to,
                               submit_time = datetime.datetime.now())
     gLogger.info("create an Entry:", entry)
     res = gTransferDB.insert_TransferRequest(entry)
     if not res["OK"]:
       return res
-    gLogger.info(filelist)
-    gLogger.info(ep_from)
-    gLogger.info(ep_to)
     return S_OK()
