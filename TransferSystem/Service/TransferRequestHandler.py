@@ -68,9 +68,7 @@ class TransferRequestHandler(RequestHandler):
                               submit_time = datetime.datetime.now())
     gLogger.info("create an Entry:", entry)
     res = gTransferDB.insert_TransferRequest(entry)
-    if not res["OK"]:
-      return res
-    return S_OK()
+    return res
 
   types_status = [ dict ]
   def export_status(self, condDict=None):
