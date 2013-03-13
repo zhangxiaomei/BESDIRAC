@@ -12,8 +12,11 @@ create table TransferRequest (
   id int not null auto_increment primary key,
   username varchar(255) not null,
   index(username),
+  dataset varchar(255) not null,
   srcSE varchar(255) not null,
   dstSE varchar(255) not null,
-  submit_time datetime
+  submit_time datetime,
+  status enum('new', 'transfer', 'finish'),
+  index(status)
 );
 
