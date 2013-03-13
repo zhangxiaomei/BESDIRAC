@@ -32,11 +32,15 @@ DatasetEntry = namedtuple('DatasetEntry',
                             'name',
                             'username',
                             ])
+DatasetEntryWithID = namedtuple('DatasetEntryWithID',
+                                ('id',) + DatasetEntry._fields)
 FilesInDatasetEntry = namedtuple('FilesInDatasetEntry',
                                 [#'id',
                                   'LFN',
                                   'dataset_id',
                                   ])
+FilesInDatasetEntryWithID = namedtuple('FilesInDatasetEntryWithID',
+                                ('id',) + FilesInDatasetEntry._fields)
 
 
 class TransferDB(DB):
@@ -120,6 +124,33 @@ class TransferDB(DB):
         return res
     return S_OK()
 
+  def get_Dataset(self, condDict = None):
+    res = self.get_DatasetInfo(condDict)
+    if not res["OK"]:
+      return res
+    filelist = []
+    for entry in map(DatasetEntryWithID._make, res["Value"]):
+      res2 = self.get_FilesInDataset( {"dataset_id": entry.id } )
+      if not res2:
+        return res2
+      filelist . extend ( res2["Value"] )
+    print filelist
+    return S_OK(filelist)
+
+  def get_DatasetInfo(self, condDict = None):
+    res = self.getFields( self.tables["Dataset"], 
+                          outFields = DatasetEntryWithID._fields,
+                          condDict = condDict,
+                        )
+    return res
+
+  def get_FilesInDataset(self, condDict = None):
+    res = self.getFields( self.tables["FilesInDataSet"],
+                          outFields = FilesInDatasetEntryWithID._fields,
+                          condDict = condDict,
+                        )
+    return res
+
   def helper_insert_Dataset_table(self, entry):
     if not isinstance(entry, DatasetEntry):
       raise TypeError("entry should be DatasetEntry")
@@ -181,3 +212,8 @@ if __name__ == "__main__":
   print gDB.get_TransferFileList(condDict)
 
   gDB.insert_Dataset( "my-dataset", "lintao", filelist)
+
+  condDict = {'name': 'my-dataset-2'}
+  print gDB.get_DatasetInfo(condDict)
+  condDict = {}
+  print gDB.get_Dataset(condDict)
