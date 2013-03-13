@@ -9,8 +9,8 @@ from DIRAC.Core.DISET.RPCClient import RPCClient
 
 transferRequest = RPCClient("Transfer/TransferRequest")
 
-filelist = [str(i) for i in xrange(10)]
-ep_from = "ep_from"
-ep_to = "ep_to"
-print transferRequest.create(filelist, ep_from, ep_to)
+dataset = "my-dataset"
+ep_from = "IHEP-USER"
+ep_to = "IHEPD-USER"
+print transferRequest.create(dataset, ep_from, ep_to)
 
