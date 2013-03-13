@@ -43,7 +43,10 @@ class TransferDB(DB):
     if not res["OK"]:
       return res
     res = self._query("select last_insert_id()")
-    return res
+    if not res["OK"]:
+      return res
+    id = res['Value'][0][0]
+    return S_OK(id)
 
   def get_TransferRequest(self, condDict = None):
     res = self.getFields( self.tables["TransferRequest"],
@@ -63,6 +66,17 @@ class TransferDB(DB):
     res = self._query("select last_insert_id()")
     return res
 
+  def insert_TransferFileList(self, trans_req_id, filelist):
+    # << get list of files for the dataset >>
+    for LFN in filelist:
+      entry = TransFileListEntry(LFN = LFN,
+                                 trans_req_id = trans_req_id,
+                                 start_time = None,
+                                 finish_time = None,
+                                 status = "new",
+                                 )
+      self.insert_PerTransferFile(entry)
+
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script
   Script.parseCommandLine( ignoreErrors = True )
@@ -77,8 +91,9 @@ if __name__ == "__main__":
                             submit_time = datetime.datetime.now())
   res = gDB.insert_TransferRequest(entry)
   trans_id = 1
-  if not res["OK"]:
+  if res["OK"]:
     trans_id = res["Value"]
+    print trans_id
   print gDB.get_TransferRequest()
   print gDB.get_TransferRequest(condDict = {"id":1})
 
@@ -89,3 +104,6 @@ if __name__ == "__main__":
                              status = "new",
                              )
   gDB.insert_PerTransferFile(entry)
+
+  filelist = map(str, range(10))
+  gDB.insert_TransferFileList(trans_id, filelist)
