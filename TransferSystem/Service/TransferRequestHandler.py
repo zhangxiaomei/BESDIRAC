@@ -1,14 +1,26 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from DIRAC import gLogger, gConfig, S_OK, S_ERROR
 from DIRAC.Core.DISET.RequestHandler import RequestHandler
 
+from BESDIRAC.TransferSystem.DB.TransferDB import TransRequestEntry
+
 tmpGlobalStore = {}
+
+global gTransferDB 
 
 def initializeTransferRequestHandler(serviceInfo):
   """ initialize handler """
 
   gLogger.info("Initialize TransferRequestHandler.")
+
+  from BESDIRAC.TransferSystem.DB.TransferDB import TransferDB
+
+  global gTransferDB
+
+  gTransferDB = TransferDB()
 
   return S_OK()
 
@@ -48,6 +60,12 @@ class TransferRequestHandler(RequestHandler):
 
   types_create = [ list, str, str ]
   def export_create(self, filelist, ep_from, ep_to):
+    entry = TransRequestEntry(username = self.user, 
+                              submit_time = datetime.datetime.now())
+    gLogger.info("create an Entry:", entry)
+    res = gTransferDB.insert_TransferRequest(entry)
+    if not res["OK"]:
+      return res
     gLogger.info(filelist)
     gLogger.info(ep_from)
     gLogger.info(ep_to)
