@@ -43,3 +43,11 @@ class DatasetHandler(RequestHandler):
       return res
 
     return S_OK()
+
+  types_list = [ str ]
+  def export_list(self, dataset):
+    gLogger.info("Dataset: ", dataset)
+    condDict = {'name': dataset}
+
+    res = gTransferDB.get_Dataset(condDict)
+    return res
