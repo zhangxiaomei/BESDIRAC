@@ -43,7 +43,7 @@ class helper_TransferAgent(object):
         self.transferDB.tables["TransferFileList"],
         result.id,
         {"status":"transfer", 
-          "start_time":datetime.datetime.now())
+          "start_time":datetime.datetime.now()})
 
     return True
 
