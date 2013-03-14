@@ -158,9 +158,10 @@ class helper_TransferAgent(object):
       gLogger.error(res)
       return None
     filelist = res["Value"]
+    gLogger.info("Filelist:")
+    gLogger.info(filelist)
     if len(filelist) > 0:
       gLogger.info("get file entry", filelist[0])
-      from BESDIRAC.TransferSystem.DB.TransferDB import TransFileListEntryWithID
       return TransFileListEntryWithID._make(filelist[0])
     return None
 
