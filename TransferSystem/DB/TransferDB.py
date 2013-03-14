@@ -90,8 +90,8 @@ class TransferDB(DB):
 
   def insert_TransferFileList(self, trans_req_id, filelist):
     # << get list of files for the dataset >>
-    for LFN in filelist:
-      entry = TransFileListEntry(LFN = LFN,
+    for dsfile in map(FilesInDatasetEntryWithID._make, filelist):
+      entry = TransFileListEntry(LFN = dsfile.LFN,
                                  trans_req_id = trans_req_id,
                                  start_time = None,
                                  finish_time = None,
