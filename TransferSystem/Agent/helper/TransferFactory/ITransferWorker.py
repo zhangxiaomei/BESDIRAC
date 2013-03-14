@@ -7,6 +7,9 @@ import time
 import select
 import sys
 
+import DIRAC
+from DIRAC import gLogger
+
 class ITransferWorker(object):
   """
   This is an Interface.
@@ -28,6 +31,11 @@ class ITransferWorker(object):
 
   def create_popen(self, info):
     cmd = self.build_cmd(info)
+    gLogger.info("The info to create a command:")
+    gLogger.info(info)
+    gLogger.info("build command:")
+    gLogger.info(cmd)
+
     self._info = info
     self._proc = subprocess.Popen(cmd, 
         stdout=subprocess.PIPE,
