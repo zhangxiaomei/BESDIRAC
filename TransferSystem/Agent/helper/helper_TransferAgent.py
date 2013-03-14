@@ -14,6 +14,9 @@ class helper_TransferAgent(object):
     if not result:
       return False
 
+    # Add the Transfer
+
+    # Change the status
     self.helper_status_update(
         self.transferDB.tables["TransferFileList"],
         result.id,
