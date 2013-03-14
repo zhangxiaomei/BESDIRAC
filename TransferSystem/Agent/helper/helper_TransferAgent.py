@@ -5,17 +5,36 @@ from DIRAC import gLogger, gConfig, S_OK, S_ERROR
 from BESDIRAC.TransferSystem.DB.TransferDB import TransRequestEntryWithID
 from BESDIRAC.TransferSystem.DB.TransferDB import TransFileListEntryWithID
 
+from BESDIRAC.TransferSystem.Agent.helper.TransferFactory import gTransferFactory
+
 class helper_TransferAgent(object):
 
-  def __init__(self, gTransferDB):
+  def __init__(self, transferAgent, gTransferDB):
+    self.transferAgent =transferAgent
     self.transferDB = gTransferDB
 
   def helper_add_transfer(self, result):
     if not result:
+      gLogger.error("There is no infomation")
       return False
 
-    # Add the Transfer
+    res = self.transferDB.get_TransferRequest(condDict={
+                                                      "id": result.trans_req_id
+                                                      })
+    if not res["OK"]:
+      return False
+    req_list = res["Value"]
+    if len(req_list) != 1:
+      return False
+    req =  TransRequestEntryWithID._make(req_list[0])
 
+    # construct the info
+    info = {"LFN": result.LFN,
+            "srcSE": req.srcSE,
+            "dstSE": req.dstSE}
+    # Add the Transfer
+    worker = gTransferFactory.generate("DIRACDMS", info)
+    transferAgent.transfer_worker.append(worker)
     # Change the status
     self.helper_status_update(
         self.transferDB.tables["TransferFileList"],
@@ -44,9 +63,9 @@ class helper_TransferAgent(object):
     reqlist = map(TransRequestEntryWithID._make, res["Value"])
     for req in reqlist:
       res = self.transferDB._query(
-          'select count(*) from %(table)s where trans_req_id = %(id)d and status != "finish"'
-          % {table: self.transferDB.tables["TransferFileList"], 
-             id: req.id}
+          'select count(*) from %(table)s where trans_req_id = %(id)d and status != "finish"' % {
+             "table": self.transferDB.tables["TransferFileList"], 
+             "id": req.id}
           )
       if not res["OK"]:
         # TODO
@@ -154,7 +173,9 @@ if __name__ == "__main__":
 
   from BESDIRAC.TransferSystem.DB.TransferDB import TransferDB 
   gTransferDB = TransferDB()
-  helper = helper_TransferAgent(gTransferDB)
+  transferAgent = gTransferDB
+  transferAgent.transfer_worker = []
+  helper = helper_TransferAgent(transferAgent, gTransferDB)
   entry = helper.helper_get_new_File()
   print helper.helper_get_new_request_entry()
 
@@ -164,5 +185,7 @@ if __name__ == "__main__":
                                        toStatus = "transfer")
 
   print helper.helper_check_request()
+  print helper.helper_add_transfer(entry)
+  print transferAgent.transfer_worker
 
   pass

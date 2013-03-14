@@ -20,7 +20,7 @@ class TransferAgent(AgentModule):
     from BESDIRAC.TransferSystem.Agent.helper import helper_TransferAgent
     gTransferDB = TransferDB()
 
-    self.helper = helper_TransferAgent(gTransferDB)
+    self.helper = helper_TransferAgent(self, gTransferDB)
 
     return S_OK()
 
