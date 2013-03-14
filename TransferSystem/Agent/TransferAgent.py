@@ -30,7 +30,17 @@ class TransferAgent(AgentModule):
     self.count += 1
 
     # Handle the existed transfer worker
-    for worker in self.transfer_worker:
+    for worker in self.transfer_worker[:]:
+      # worker is TransferWorker
+      retcode = worker.get_retcode()
+      if retcode is not None:
+        self.transfer_worker.remove(worker)
+        # Handle retcode
+        worker.handle_exit(retcode)
+        self.helper.helper_remove_transfer(worker)
+      else:
+        # the job is not OK
+        worker.handle_waiting()
       pass
     else:
       # the transfer work are all working

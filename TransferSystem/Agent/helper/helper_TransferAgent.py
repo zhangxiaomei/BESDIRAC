@@ -2,6 +2,9 @@
 
 from DIRAC import gLogger, gConfig, S_OK, S_ERROR
 
+from BESDIRAC.TransferSystem.DB.TransferDB import TransRequestEntryWithID
+from BESDIRAC.TransferSystem.DB.TransferDB import TransFileListEntryWithID
+
 class helper_TransferAgent(object):
 
   def __init__(self, gTransferDB):
@@ -18,6 +21,44 @@ class helper_TransferAgent(object):
 
     return True
 
+  def helper_remove_transfer(self, worker):
+    entry = worker.entry
+    self.helper_status_update(
+        self.transferDB.tables["TransferFileList"],
+        entry.id,
+        "finish")
+    
+  def helper_check_request(self):
+    """
+      check if the *transfer* request are ok.
+      if the whole files are *finish*, then this request
+      will become *finish*.
+    """
+    infoDict = {"status": "transfer"}
+    res = self.transferDB.get_TransferRequest(condDict = infoDict)
+    if not res["OK"]:
+      return
+    reqlist = map(TransRequestEntryWithID._make, res["Value"])
+    for req in reqlist:
+      res = self.transferDB._query(
+          'select count(*) from %(table)s where trans_req_id = %(id)d and status != "finish"'
+          % {table: self.transferDB.tables["TransferFileList"], 
+             id: req.id}
+          )
+      if not res["OK"]:
+        # TODO
+        continue
+      count = res["Value"]
+      if count == 0:
+        # if all status is finish,
+        # the req status --> finish
+        gLogger.info("req.id %d change from %s to finish" % (req.id, req.status))
+        self.helper_status_update(
+            self.transferDB.tables["TransferRequest"],
+            req.id,
+            "finish")
+    return 
+
   def helper_get_new_request(self):
     # 1. get the *new* File in the <<Transfer File List>>.
     #    if we get, goto <<Add New Transfer>>
@@ -27,6 +68,7 @@ class helper_TransferAgent(object):
     # 2. if we can't get, use should get a *new* request
     #    from the <<Transfer Request>>.
     #    if we can't get, return False. STOP
+    self.helper_check_request()
     result = self.helper_get_new_request_entry()
     if not result:
       return result
@@ -68,7 +110,6 @@ class helper_TransferAgent(object):
       return None
     req_list = res["Value"]
     if len(req_list):
-      from BESDIRAC.TransferSystem.DB.TransferDB import TransRequestEntryWithID
       return TransRequestEntryWithID._make(req_list[0])
     pass
 
@@ -118,5 +159,7 @@ if __name__ == "__main__":
     print helper.helper_status_update( table = "TransferFileList", 
                                        id = entry.id,
                                        toStatus = "transfer")
+
+  print helper.helper_check_request()
 
   pass
