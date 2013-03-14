@@ -35,7 +35,7 @@ class helper_TransferAgent(object):
             "dstSE": req.dstSE}
     # Add the Transfer
     worker = gTransferFactory.generate("DIRACDMS", info)
-    transferAgent.transfer_worker.append(worker)
+    self.transferAgent.transfer_worker.append(worker)
     # Change the status
     self.helper_status_update(
         self.transferDB.tables["TransferFileList"],
