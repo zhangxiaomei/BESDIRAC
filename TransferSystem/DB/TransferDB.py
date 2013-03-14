@@ -16,6 +16,8 @@ TransRequestEntry = namedtuple('TransRequestEntry',
                                'submit_time',
                                'status',
                                ])
+TransRequestEntryWithID = namedtuple('TransRequestEntryWithID',
+                                      ('id',) + TransRequestEntry._fields)
 TransFileListEntry = namedtuple('TransFileListEntry',
                                 [#'id',
                                  'LFN',
@@ -70,7 +72,7 @@ class TransferDB(DB):
 
   def get_TransferRequest(self, condDict = None):
     res = self.getFields( self.tables["TransferRequest"],
-                          outFields = TransRequestEntry._fields,
+                          outFields = TransRequestEntryWithID._fields,
                           condDict = condDict,
                           )
     return res
