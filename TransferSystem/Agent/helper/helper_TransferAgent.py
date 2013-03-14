@@ -29,7 +29,8 @@ class helper_TransferAgent(object):
     req =  TransRequestEntryWithID._make(req_list[0])
 
     # construct the info
-    info = {"LFN": result.LFN,
+    info = {"id": result.id,
+            "LFN": result.LFN,
             "srcSE": req.srcSE,
             "dstSE": req.dstSE}
     # Add the Transfer
@@ -44,10 +45,11 @@ class helper_TransferAgent(object):
     return True
 
   def helper_remove_transfer(self, worker):
-    entry = worker.entry
+    info = worker.info
+    gLogger.info("File.id = %d -> finish" % info["id"])
     self.helper_status_update(
         self.transferDB.tables["TransferFileList"],
-        entry.id,
+        info["id"],
         "finish")
     
   def helper_check_request(self):
