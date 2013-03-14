@@ -17,7 +17,10 @@ class TransferAgent(AgentModule):
 
     global gTransferDB
     from BESDIRAC.TransferSystem.DB.TransferDB import TransferDB
+    from BESDIRAC.TransferSystem.Agent.helper import helper_TransferAgent
     gTransferDB = TransferDB()
+
+    self.helper = helper_TransferAgent(gTransferDB)
 
     return S_OK()
 
@@ -51,8 +54,11 @@ class TransferAgent(AgentModule):
       else return false
     """
     # << Get New File >>
-    result = self.helper_get_new_request()
+    result = self.helper.helper_get_new_request()
+    gLogger.info(result)
+    if not result:
+      return False
 
     # << Add New Transfer >>
-    return self.helper_add_transfer(result)
+    return self.helper.helper_add_transfer(result)
 

@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from DIRAC import gLogger, gConfig, S_OK, S_ERROR
-global gTransferDB
 
 class helper_TransferAgent(object):
+
+  def __init__(self, gTransferDB):
+    self.transferDB = gTransferDB
 
   def helper_add_transfer(self, result):
     if not result:
       return False
+
+    self.helper_status_update(
+        self.transferDB.tables["TransferFileList"],
+        result.id,
+        "transfer")
 
     return True
 
@@ -25,7 +32,7 @@ class helper_TransferAgent(object):
       return result
     # 3. add the filelist in the dataset to the << Transfer File List >>
     condDict = {"name":result.dataset}  
-    res = gTransferDB.get_Dataset(condDict)
+    res = self.transferDB.get_Dataset(condDict)
     if not res["OK"]:
       gLogger.error(res)
       return None
@@ -35,10 +42,10 @@ class helper_TransferAgent(object):
       req_status = "transfer"
     else:
       req_status = "finish"
-    self.helper_status_update(gTransferDB.tables["TransferRequest"],
+    self.helper_status_update(self.transferDB.tables["TransferRequest"],
                               result.id,
                               req_status)
-    gTransferDB.insert_TransferFileList(result.id, filelist)
+    self.transferDB.insert_TransferFileList(result.id, filelist)
     # 4. get the *new* File Again.
     # 5. can't get, return False. STOP
     result = self.helper_get_new_File()
@@ -56,7 +63,7 @@ class helper_TransferAgent(object):
       status='new')
     """
     condDict = {"status": "new"}
-    res = gTransferDB.get_TransferRequest(condDict)
+    res = self.transferDB.get_TransferRequest(condDict)
     if not res["OK"]:
       return None
     req_list = res["Value"]
@@ -77,7 +84,7 @@ class helper_TransferAgent(object):
       status='new')
     """
     condDict = {"status": "new"}
-    res = gTransferDB.get_TransferFileList(condDict)
+    res = self.transferDB.get_TransferFileList(condDict)
     if not res["OK"]:
       gLogger.error(res)
       return None
@@ -89,7 +96,7 @@ class helper_TransferAgent(object):
     return None
 
   def helper_status_update(self, table, id, toStatus):
-    res = gTransferDB.updateFields(
+    res = self.transferDB.updateFields(
                               table,
                               updateFields = ("status",),
                               updateValues = (toStatus,),
@@ -103,7 +110,7 @@ if __name__ == "__main__":
 
   from BESDIRAC.TransferSystem.DB.TransferDB import TransferDB 
   gTransferDB = TransferDB()
-  helper = helper_TransferAgent()
+  helper = helper_TransferAgent(gTransferDB)
   entry = helper.helper_get_new_File()
   print helper.helper_get_new_request_entry()
 
