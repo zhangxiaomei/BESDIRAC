@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from DIRAC import gLogger, gConfig, S_OK, S_ERROR
 
 from BESDIRAC.TransferSystem.DB.TransferDB import TransRequestEntryWithID
@@ -40,7 +42,8 @@ class helper_TransferAgent(object):
     self.helper_status_update(
         self.transferDB.tables["TransferFileList"],
         result.id,
-        "transfer")
+        {"status":"transfer", 
+          "start_time":datetime.datetime.now())
 
     return True
 
@@ -50,7 +53,8 @@ class helper_TransferAgent(object):
     self.helper_status_update(
         self.transferDB.tables["TransferFileList"],
         info["id"],
-        "finish")
+        {"status":"finish", 
+          "finish_time": datetime.datetime.now()})
     
   def helper_check_request(self):
     """
@@ -80,7 +84,7 @@ class helper_TransferAgent(object):
         self.helper_status_update(
             self.transferDB.tables["TransferRequest"],
             req.id,
-            "finish")
+            {"status":"finish"})
     return 
 
   def helper_get_new_request(self):
@@ -110,7 +114,7 @@ class helper_TransferAgent(object):
       req_status = "finish"
     self.helper_status_update(self.transferDB.tables["TransferRequest"],
                               result.id,
-                              req_status)
+                              {"status":req_status})
     self.transferDB.insert_TransferFileList(result.id, filelist)
     # 4. get the *new* File Again.
     # 5. can't get, return False. STOP
@@ -160,11 +164,10 @@ class helper_TransferAgent(object):
       return TransFileListEntryWithID._make(filelist[0])
     return None
 
-  def helper_status_update(self, table, id, toStatus):
+  def helper_status_update(self, table, id, toUpdate):
     res = self.transferDB.updateFields(
                               table,
-                              updateFields = ("status",),
-                              updateValues = (toStatus,),
+                              updateDict = toUpdate,
                               condDict = {"id":id},
                               )
     print res
@@ -184,7 +187,7 @@ if __name__ == "__main__":
   if entry:
     print helper.helper_status_update( table = "TransferFileList", 
                                        id = entry.id,
-                                       toStatus = "transfer")
+                                       toStatus = {"status":"transfer"})
 
   print helper.helper_check_request()
   print helper.helper_add_transfer(entry)
