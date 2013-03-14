@@ -76,7 +76,7 @@ class helper_TransferAgent(object):
       if not res["OK"]:
         # TODO
         continue
-      count = res["Value"]
+      count = res["Value"][0][0]
       if count == 0:
         # if all status is finish,
         # the req status --> finish
