@@ -4,10 +4,15 @@
 
 import subprocess
 
+import DIRAC
+from DIRAC import gLogger
+
 class TransferFactory(object):
   PROTOCOL = ["DIRACDMS"]
 
   def generate(self, protocol, info):
+    gLogger.info("Load Module:")
+    gLogger.info("BESDIRAC.TransferSystem.Agent.helper.TransferFactory.TransferBy%s"%(protocol))
     mod = __import__("BESDIRAC.TransferSystem.Agent.helper.TransferFactory.TransferBy%s"%(protocol),
         globals(),
         locals(),
