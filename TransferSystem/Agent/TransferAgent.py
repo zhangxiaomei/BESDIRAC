@@ -40,6 +40,7 @@ class TransferAgent(AgentModule):
         result = worker.handle_exit(retcode)
         if result:
           gLogger.error(result)
+          self.helper.helper_error_report(worker, result)
         self.helper.helper_remove_transfer(worker)
       else:
         # the job is not OK

@@ -176,7 +176,7 @@ class helper_TransferAgent(object):
   def helper_error_report(self, worker, reason):
     self.helper_status_update(self.transferDB.tables["TransferFileList"],
                               worker.info["id"],
-                              toUpdate = {"error", reason})
+                              {"error": reason})
 
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script
