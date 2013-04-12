@@ -20,13 +20,16 @@ class DIRACDMSTransferWorker(ITransferWorker):
     if returncode is None:
       return
     if returncode != 0:
-      print "some error happens."
-      print "work done"
+      return  self._buffer 
 
   def handle_line(self, line):
     return line
 
 if __name__ == "__main__":
+
+  import DIRAC
+  from DIRAC.Core.Base import Script
+  Script.parseCommandLine( ignoreErrors = True )
 
   dtw = DIRACDMSTransferWorker()
   info = {"LFN":"/users/l/lintao/README_IHEPD",
@@ -40,6 +43,7 @@ if __name__ == "__main__":
     dtw.handle_waiting()
     returncode = dtw.get_retcode()
   else:
-    dtw.handle_exit(returncode)
+    dtw.handle_waiting()
+    print dtw.handle_exit(returncode)
 
   print "Work Done."

@@ -36,7 +36,10 @@ class TransferAgent(AgentModule):
       if retcode is not None:
         self.transfer_worker.remove(worker)
         # Handle retcode
-        worker.handle_exit(retcode)
+        worker.handle_waiting()
+        result = worker.handle_exit(retcode)
+        if result:
+          gLogger.error(result)
         self.helper.helper_remove_transfer(worker)
       else:
         # the job is not OK
