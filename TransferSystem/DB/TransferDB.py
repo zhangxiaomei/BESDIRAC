@@ -25,6 +25,7 @@ TransFileListEntry = namedtuple('TransFileListEntry',
                                  'start_time',
                                  'finish_time',
                                  'status',
+                                 'error',
                                  ])
 TransFileListEntryWithID = namedtuple('TransFileListEntryWithID',
                                       ('id',) + TransFileListEntry._fields)
