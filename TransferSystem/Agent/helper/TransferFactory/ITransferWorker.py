@@ -17,6 +17,7 @@ class ITransferWorker(object):
 
   def __init__(self):
     self._proc = None
+    self._buffer = ""
 
   @property
   def proc(self):
@@ -72,12 +73,10 @@ class ITransferWorker(object):
                            , 1 )
     for out in r:
       # ready for reading
-      sys.stdout.write( self.handle_stream( out ) )
-      sys.stdout.flush()
+      self._buffer += self.handle_stream( out )
     for out in x:
       # exceptional condition
-      sys.stdout.write( self.handle_stream( out ) )
-      sys.stdout.flush()
+      self._buffer += self.handle_stream( out )
 
 class DemoTransferWorker(ITransferWorker):
 
