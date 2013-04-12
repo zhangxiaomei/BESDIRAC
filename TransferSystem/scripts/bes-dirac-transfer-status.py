@@ -10,5 +10,7 @@ from DIRAC.Core.DISET.RPCClient import RPCClient
 transferRequest = RPCClient("Transfer/TransferRequest")
 
 condDict = {}
-print transferRequest.status(condDict)
-
+res = transferRequest.status(condDict)
+if res["OK"]:
+  for line in res["Value"]:
+    print line
