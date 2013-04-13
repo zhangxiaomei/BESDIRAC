@@ -97,6 +97,7 @@ class TransferDB(DB):
                                  start_time = None,
                                  finish_time = None,
                                  status = "new",
+                                 error = "",
                                  )
       self.insert_PerTransferFile(entry)
 
