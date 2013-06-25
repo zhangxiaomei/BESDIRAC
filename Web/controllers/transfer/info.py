@@ -12,7 +12,9 @@ class InfoController(BaseController):
   @jsonify
   def getInfoList(self):
     realdata = [
-        {"FuncName":"ListRequest", "ScriptName":"besdirac-transfer-list-request.py"} 
+        {"FuncName":"ListRequest", "ScriptName":"bes-dirac-transfer-list-request.py"},
+        {"FuncName":"ListFilelist", "ScriptName":"bes-dirac-transfer-list-files.py"},
+        {"FuncName":"Status", "ScriptName":"bes-dirac-transfer-status.py"} 
         ]
     data = { 'numRecords': len(realdata),
              'functions': realdata}

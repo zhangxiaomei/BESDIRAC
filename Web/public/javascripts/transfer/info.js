@@ -37,7 +37,8 @@ function createInfoPanel() {
         id: 'checkBox', 
         dataIndex: 'FuncCheckBox',
         renderer: function(value, metadata, record, rowIndex, colIndex, store) {
-          return '<input id="' + record.id + '" type="checkbox" />';
+          var url = gURLRoot + '/' + gPageDescription.selectedSetup + '/' + record.id
+          return '<a id="' + record.id + '" href="' + url + '">View</a>';
         },
         hideable: false,
         fixed: true,
