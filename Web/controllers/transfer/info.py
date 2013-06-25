@@ -8,3 +8,12 @@ class InfoController(BaseController):
 
   def index(self):
     return render("/transfer/info.mako")
+
+  @jsonify
+  def getInfoList(self):
+    realdata = [
+        {"FuncName":"ListRequest", "ScriptName":"besdirac-transfer-list-request.py"} 
+        ]
+    data = { 'numRecords': len(realdata),
+             'functions': realdata}
+    return data
