@@ -1,3 +1,5 @@
+var gMainContent = false;
+
 function initInfo() {
   Ext.onReady(function() {
     renderPage();
@@ -5,8 +7,8 @@ function initInfo() {
 }
 
 function renderPage() {
-  var mainContent = createInfoPanel();
-  renderInMainViewport([mainContent]);
+  gMainContent = createInfoPanel();
+  renderInMainViewport([gMainContent]);
 }
 
 function createInfoPanel() {
@@ -22,7 +24,10 @@ function createInfoPanel() {
     reader: reader,
     url: 'getInfoList',
     autoLoad: true,
-    sortInfo: {field: 'FuncName', direction: 'DESC'}
+    sortInfo: {field: 'FuncName', direction: 'DESC'},
+    listeners: {
+      beforeload: cbStoreBeforeLoad
+    }
   });
   // Create the panel
   var title = "Transfer System Info"
@@ -42,13 +47,60 @@ function createInfoPanel() {
     {header: 'Script', sortable: true, dataIndex: 'ScriptName'}
   ];
 
+  var topbar = [
+    { handler: function() {
+        toggleAll(true)
+      },
+      text: 'Select all',
+      width: 150,
+      tooltip: 'Click to select all rows'
+    },
+    { handler: function() {
+        toggleAll(false)
+      },
+      text: 'Select none',
+      width: 150,
+      tooltip: 'Click to unselect all rows'
+    },
+  ];
+
+  var bottombar = new Ext.PagingToolbar({
+    pageSize: 50,
+    store: store,
+    displayInfo: true,
+    displayMsg: 'Displaying {0} - {1} of {2}'
+  });
+
   var mainContent = new Ext.grid.GridPanel({
     store: store,
     columns: columns,
-    region: 'center'
+    region: 'center',
+    tbar: topbar,
+    bbar: bottombar
   });
   // End
   //var html = "<p>Hello</p>";
   //var mainContent = new Ext.Panel({html:html, region:'center'});
   return mainContent;
+}
+
+// helper functions
+function toggleAll( select ) {
+  var checkbox = document.getElementsByTagName('input');
+  for (var i=0; i < checkbox.length; ++i) {
+    if ( checkbox[i].type == 'checkbox' ) {
+      checkbox[i].checked = select;
+    }
+  }
+}
+
+function cbStoreBeforeLoad(store, params)
+{
+  var sortState = store.getSortState();
+  var bb = gMainContent.getBottomToolbar();
+  store.baseParams = {
+    'sortField': sortState.field,
+    'sortDirection': sortState.direction,
+    'limit': bb.pageSize,
+  };
 }
