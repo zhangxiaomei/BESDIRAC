@@ -3,12 +3,11 @@
 <%inherit file="/diracPage.mako" />
 
 <%def name="head_tags()">
+${ h.javascript_link( "/javascripts/transfer/info.js" ) }
 </%def>
 
 <%def name="body()">
 <script type="text/javascript">
-  var html = "<p>Hello</p>";
-  var mainContent = new Ext.Panel({html:html, region:'center'});
-  renderInMainViewport([mainContent]);
+  initInfo();
 </script>
 </%def>
