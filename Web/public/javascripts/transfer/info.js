@@ -39,7 +39,7 @@ function createFileListPanel() {
   var store = new Ext.data.Store({
     reader: reader,
     proxy: new Ext.data.HttpProxy({
-      url:'info/getDetailList?funcname=Status'
+      url:''
     }),
     autoLoad: false,
     sortInfo: {field: 'author', direction: 'DESC'},
@@ -82,9 +82,13 @@ function createRequestPanel() {
     fields: ["FuncName", "ScriptName"]
   });
   // create Store
+  var setup = gPageDescription.selectedSetup;
+  var group = gPageDescription.userData.group;
+  var url = 'https://' + location.host + '/DIRAC/' + setup + '/' + group;
+  url = url + '/transfer/info/getInfoList';
   var store = new Ext.data.Store({
     reader: reader,
-    url: 'info/getInfoList',
+    url: url,
     autoLoad: true,
     sortInfo: {field: 'FuncName', direction: 'DESC'},
     listeners: {
@@ -159,8 +163,14 @@ function cbStoreBeforeLoad(store, params)
 function showInfo( grid ) {
   var selModel = grid.getSelectionModel();
   var rec = selModel.getSelected();
+
+  var setup = gPageDescription.selectedSetup;
+  var group = gPageDescription.userData.group;
+  var url = 'https://' + location.host + '/DIRAC/' + setup + '/' + group;
+  url = url + '/transfer/info/getDetailList?funcname=' + rec.get("FuncName");
+
   gFileList.store.proxy = new Ext.data.HttpProxy({
-    url: "info/getDetailList?funcname=" + rec.get("FuncName")
+    url: url
   });
   gFileList.store.load();
 }
