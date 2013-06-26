@@ -41,7 +41,7 @@ function createFileListPanel() {
     proxy: new Ext.data.HttpProxy({
       url:'info/getDetailList?funcname=Status'
     }),
-    autoLoad: true,
+    autoLoad: false,
     sortInfo: {field: 'author', direction: 'DESC'},
   });
   // create columns
@@ -153,4 +153,8 @@ function showInfo( grid ) {
   if (rec) {
     alert(rec.get('ScriptName'));
   }
+  gFileList.store.proxy = new Ext.data.HttpProxy({
+    url: "info/getDetailList?funcname=" + rec.get("FuncName")
+  });
+  gFileList.store.load();
 }
