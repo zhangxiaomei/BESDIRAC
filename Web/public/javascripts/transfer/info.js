@@ -1,4 +1,6 @@
 var gMainContent = false;
+var gRequestList = false;
+var gFileList = false;
 var gSelModel = false;
 
 function initInfo() {
@@ -9,7 +11,7 @@ function initInfo() {
 
 function renderPage() {
   gMainContent = createInfoPanel();
-  renderInMainViewport([gMainContent]);
+  renderInMainViewport(gMainContent);
 }
 
 function createInfoPanel() {
@@ -51,7 +53,7 @@ function createInfoPanel() {
 
   var topbar = [
     { handler: function(wiget, event) {
-        showInfo(gMainContent);
+        showInfo(gRequestList);
       },
       text: 'View Selected',
       width: 150,
@@ -66,20 +68,30 @@ function createInfoPanel() {
     displayMsg: 'Displaying {0} - {1} of {2}'
   });
 
-  var mainContent = new Ext.grid.GridPanel({
+  var grid = new Ext.grid.GridPanel({
     store: store,
     columns: columns,
     region: 'center',
     tbar: topbar,
     bbar: bottombar,
     sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+    width: '50%'
   });
-  mainContent.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
+  grid.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
   }
   );
+  // Another grid
+  var grid2 = new Ext.grid.GridPanel({
+    store: store,
+    columns: columns,
+    region: 'east',
+    width: '50%',
+  });
   // End
   //var html = "<p>Hello</p>";
-  //var mainContent = new Ext.Panel({html:html, region:'center'});
+  var mainContent = [grid, grid2];
+  gRequestList = grid;
+  gFileList = grid2;
   return mainContent;
 }
 
@@ -87,7 +99,7 @@ function createInfoPanel() {
 function cbStoreBeforeLoad(store, params)
 {
   var sortState = store.getSortState();
-  var bb = gMainContent.getBottomToolbar();
+  var bb = gRequestList.getBottomToolbar();
   store.baseParams = {
     'sortField': sortState.field,
     'sortDirection': sortState.direction,
