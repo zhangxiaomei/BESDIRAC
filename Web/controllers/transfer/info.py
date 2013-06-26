@@ -19,3 +19,20 @@ class InfoController(BaseController):
     data = { 'numRecords': len(realdata),
              'functions': realdata}
     return data
+
+  @jsonify
+  def getDetailList(self):
+    detail_data = {
+      "ListRequest":{"auther":"lintao", "detail":"xxx"},
+      "ListFilelist":{"auther":"lintao", "detail":"yyy"},
+      "Status":{"auther":"lintao", "detail":"zzz"},
+    }
+    name = ""
+    if request.params.has_key("funcname"):
+      name = request.params["funcname"]
+
+    if name in detail_data:
+      return {'num': 1, 'data': [detail_data[name]]}
+    return {'num':0, 'data': []}
+
+
