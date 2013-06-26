@@ -15,6 +15,54 @@ function renderPage() {
 }
 
 function createInfoPanel() {
+  var grid = createRequestPanel();
+  // Another grid
+  var grid2 = createFileListPanel();
+  // End
+  //var html = "<p>Hello</p>";
+  var mainContent = [grid, grid2];
+  gRequestList = grid;
+  gFileList = grid2;
+  return mainContent;
+}
+
+// Create File List Panel
+function createFileListPanel() {
+  // create Reader
+  var reader = new Ext.data.JsonReader({
+    root: 'data',
+    totalProperty: 'num',
+    id: 'author',
+    fields: ["author", "detail"]
+  });
+  // create Store
+  var store = new Ext.data.Store({
+    reader: reader,
+    url: 'getDetailList?funcname=Status',
+    autoLoad: true,
+    sortInfo: {field: 'author', direction: 'DESC'},
+  });
+  // create columns
+  var columns = [
+    {"header": "Name",
+      dataIndex: "author",
+      sortable: true
+    },
+    {"header": "Detail",
+      dataIndex: "detail",
+    },
+  ]
+  var grid2 = new Ext.grid.GridPanel({
+    store: store,
+    columns: columns,
+    region: 'east',
+    width: '50%',
+  });
+  return grid2;
+}
+
+// Create Request Panel
+function createRequestPanel() {
   // create Reader
   var reader = new Ext.data.JsonReader({
     root: 'functions',
@@ -80,19 +128,8 @@ function createInfoPanel() {
   grid.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
   }
   );
-  // Another grid
-  var grid2 = new Ext.grid.GridPanel({
-    store: store,
-    columns: columns,
-    region: 'east',
-    width: '50%',
-  });
-  // End
-  //var html = "<p>Hello</p>";
-  var mainContent = [grid, grid2];
-  gRequestList = grid;
-  gFileList = grid2;
-  return mainContent;
+
+  return grid;
 }
 
 // helper functions
