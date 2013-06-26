@@ -129,6 +129,7 @@ function createRequestPanel() {
     width: '50%'
   });
   grid.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
+    showInfo(gRequestList)
   }
   );
 
@@ -150,9 +151,6 @@ function cbStoreBeforeLoad(store, params)
 function showInfo( grid ) {
   var selModel = grid.getSelectionModel();
   var rec = selModel.getSelected();
-  if (rec) {
-    alert(rec.get('ScriptName'));
-  }
   gFileList.store.proxy = new Ext.data.HttpProxy({
     url: "info/getDetailList?funcname=" + rec.get("FuncName")
   });
