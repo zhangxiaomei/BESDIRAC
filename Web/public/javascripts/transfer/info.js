@@ -38,7 +38,9 @@ function createFileListPanel() {
   // create Store
   var store = new Ext.data.Store({
     reader: reader,
-    url: 'getDetailList?funcname=Status',
+    proxy: new Ext.data.HttpProxy({
+      url:'info/getDetailList?funcname=Status'
+    }),
     autoLoad: true,
     sortInfo: {field: 'author', direction: 'DESC'},
   });
@@ -50,6 +52,7 @@ function createFileListPanel() {
     },
     {"header": "Detail",
       dataIndex: "detail",
+      sortable: true
     },
   ]
   var grid2 = new Ext.grid.GridPanel({
@@ -73,7 +76,7 @@ function createRequestPanel() {
   // create Store
   var store = new Ext.data.Store({
     reader: reader,
-    url: 'getInfoList',
+    url: 'info/getInfoList',
     autoLoad: true,
     sortInfo: {field: 'FuncName', direction: 'DESC'},
     listeners: {
