@@ -55,11 +55,19 @@ function createFileListPanel() {
       sortable: true
     },
   ]
+  // paging
+  var bottombar = new Ext.PagingToolbar({
+    pageSize: 50,
+    store: store,
+    displayInfo: true,
+    displayMsg: 'Displaying {0} - {1} of {2}'
+  });
   var grid2 = new Ext.grid.GridPanel({
     store: store,
     columns: columns,
     region: 'east',
     width: '50%',
+    bbar: bottombar
   });
   return grid2;
 }
