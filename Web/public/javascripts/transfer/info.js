@@ -1,4 +1,5 @@
 var gMainContent = false;
+var gSelModel = false;
 
 function initInfo() {
   Ext.onReady(function() {
@@ -49,19 +50,12 @@ function createInfoPanel() {
   ];
 
   var topbar = [
-    { handler: function() {
-        toggleAll(true)
+    { handler: function(wiget, event) {
+        showInfo(gMainContent);
       },
-      text: 'Select all',
+      text: 'View Selected',
       width: 150,
-      tooltip: 'Click to select all rows'
-    },
-    { handler: function() {
-        toggleAll(false)
-      },
-      text: 'Select none',
-      width: 150,
-      tooltip: 'Click to unselect all rows'
+      tooltip: 'Click to view selected row'
     },
   ];
 
@@ -77,8 +71,12 @@ function createInfoPanel() {
     columns: columns,
     region: 'center',
     tbar: topbar,
-    bbar: bottombar
+    bbar: bottombar,
+    sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
   });
+  mainContent.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
+  }
+  );
   // End
   //var html = "<p>Hello</p>";
   //var mainContent = new Ext.Panel({html:html, region:'center'});
@@ -86,15 +84,6 @@ function createInfoPanel() {
 }
 
 // helper functions
-function toggleAll( select ) {
-  var checkbox = document.getElementsByTagName('input');
-  for (var i=0; i < checkbox.length; ++i) {
-    if ( checkbox[i].type == 'checkbox' ) {
-      checkbox[i].checked = select;
-    }
-  }
-}
-
 function cbStoreBeforeLoad(store, params)
 {
   var sortState = store.getSortState();
@@ -104,4 +93,12 @@ function cbStoreBeforeLoad(store, params)
     'sortDirection': sortState.direction,
     'limit': bb.pageSize,
   };
+}
+
+function showInfo( grid ) {
+  var selModel = grid.getSelectionModel();
+  var rec = selModel.getSelected();
+  if (rec) {
+    alert(rec.get('ScriptName'));
+  }
 }
