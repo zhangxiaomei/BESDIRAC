@@ -32,7 +32,7 @@ function createFileListPanel() {
   var reader = new Ext.data.JsonReader({
     root: 'data',
     totalProperty: 'num',
-    id: 'author',
+    //id: 'author',
     fields: ["author", "detail"]
   });
   // create Store

@@ -32,7 +32,7 @@ class InfoController(BaseController):
       name = request.params["funcname"]
 
     if name in detail_data:
-      return {'num': 1, 'data': [detail_data[name]]}
+      return {'num': 10*len(name), 'data': [detail_data[name]]*(10*len(name))}
     return {'num':0, 'data': []}
 
 
