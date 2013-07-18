@@ -36,7 +36,7 @@ class helper_TransferAgent(object):
             "srcSE": req.srcSE,
             "dstSE": req.dstSE}
     # Add the Transfer
-    worker = gTransferFactory.generate("DIRACDMS", info)
+    worker = gTransferFactory.generate("DIRACFTS", info)
     self.transferAgent.transfer_worker.append(worker)
     # Change the status
     self.helper_status_update(
@@ -172,6 +172,11 @@ class helper_TransferAgent(object):
                               condDict = {"id":id},
                               )
     print res
+
+  def helper_error_report(self, worker, reason):
+    self.helper_status_update(self.transferDB.tables["TransferFileList"],
+                              worker.info["id"],
+                              {"error": reason})
 
 if __name__ == "__main__":
   from DIRAC.Core.Base import Script

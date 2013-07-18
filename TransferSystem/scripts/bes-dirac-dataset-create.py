@@ -21,7 +21,7 @@ for k,v in Script.getUnprocessedSwitches():
   if k.lower() in ["f", "file"]:
     with open(v) as f:
       for line in f:
-        filelist.append(line)
+        filelist.append(line.strip())
 
 args = Script.getPositionalArgs()
 if ( len(args) == 0 or (len(filelist)+len(args) < 2) ):

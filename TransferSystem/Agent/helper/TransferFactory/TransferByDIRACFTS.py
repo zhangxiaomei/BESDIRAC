@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
-
 from BESDIRAC.TransferSystem.Agent.helper.TransferFactory.ITransferWorker import *
 
-class DIRACDMSTransferWorker(ITransferWorker):
+class DIRACFTSTransferWorker(ITransferWorker):
 
   def build_cmd(self, info):
     LFN = info["LFN"]
     srcSE = info["srcSE"]
     dstSE = info["dstSE"]
 
-    cmd_list = [#"dirac-dms-fts-submit", 
-                  "dirac-dms-replicate-lfn",
+    cmd_list = ["dirac-dms-fts-submit", 
                   LFN,
-                  #srcSE,
+                  srcSE,
                   dstSE]
     return cmd_list
 
   def handle_exit(self, returncode):
+    return  self._buffer 
     if returncode is None:
       return
     if returncode != 0:
@@ -25,14 +24,16 @@ class DIRACDMSTransferWorker(ITransferWorker):
   def handle_line(self, line):
     return line
 
+
+
 if __name__ == "__main__":
 
   import DIRAC
   from DIRAC.Core.Base import Script
   Script.parseCommandLine( ignoreErrors = True )
 
-  dtw = DIRACDMSTransferWorker()
-  info = {"LFN":"/users/l/lintao/README_IHEPD",
+  dtw = DIRACFTSTransferWorker()
+  info = {"LFN":"/bes/user/z/zhangxm/dataTest/file9",
           "srcSE": "IHEP-USER",
           "dstSE": "JINR-USER"}
   dtw.create_popen(info)

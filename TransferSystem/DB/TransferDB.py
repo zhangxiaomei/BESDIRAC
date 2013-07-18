@@ -25,6 +25,7 @@ TransFileListEntry = namedtuple('TransFileListEntry',
                                  'start_time',
                                  'finish_time',
                                  'status',
+                                 'error',
                                  ])
 TransFileListEntryWithID = namedtuple('TransFileListEntryWithID',
                                       ('id',) + TransFileListEntry._fields)
@@ -96,6 +97,7 @@ class TransferDB(DB):
                                  start_time = None,
                                  finish_time = None,
                                  status = "new",
+                                 error = "",
                                  )
       self.insert_PerTransferFile(entry)
 
@@ -202,11 +204,11 @@ if __name__ == "__main__":
                              start_time = None,
                              finish_time = None,
                              status = "new",
+                             error = "",
                              )
   gDB.insert_PerTransferFile(entry)
 
   filelist = map(str, range(10))
-  gDB.insert_TransferFileList(trans_id, filelist)
 
   condDict = {'trans_req_id': trans_id}
   print gDB.get_TransferFileList(condDict)
@@ -218,4 +220,7 @@ if __name__ == "__main__":
   condDict = {'name': 'my-dataset-2'}
   print gDB.get_DatasetInfo(condDict)
   condDict = {}
-  print gDB.get_Dataset(condDict)
+  res = gDB.get_Dataset(condDict)
+  if res["OK"]:
+    filelist = res["Value"]
+    gDB.insert_TransferFileList(trans_id, filelist)

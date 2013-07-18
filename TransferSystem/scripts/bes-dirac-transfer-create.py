@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import DIRAC
+from DIRAC import gLogger
 from DIRAC.Core.Base import Script
 
 Script.setUsageMessage("""
