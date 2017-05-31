@@ -1,4 +1,4 @@
-""" Test class ""
+""" Test class """
 
 # imports
 import unittest
