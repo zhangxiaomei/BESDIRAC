@@ -2,8 +2,6 @@
 import unittest
 import importlib
 
-from DIRAC import gLogger
-
 class AgentsTestCase( unittest.TestCase ):
   def setUp( self ):
     pass
