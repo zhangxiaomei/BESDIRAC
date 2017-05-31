@@ -1,5 +1,3 @@
-""" Test class """
-
 # imports
 import unittest
 import importlib
