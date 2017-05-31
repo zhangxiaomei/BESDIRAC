@@ -9,8 +9,6 @@ from DIRAC import gLogger
 
 
 class AgentsTestCase( unittest.TestCase ):
-  """ Base class for the Agents test cases
-  """
   def setUp( self ):
     pass
 
